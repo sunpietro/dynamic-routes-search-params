@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 
@@ -6,12 +6,12 @@ export const FormPage = ({ surname, name }) => {
   const formRef = useRef(null);
   const { handleSubmit, register } = useForm();
   const router = useRouter();
-  const handleFormSubmit = event => {
-    // event.preventDefault();
-    // console.log(formRef.current.name.value);
-
-    router.push('/pl/something?name=' + formRef.current.name.value);
-  };
+  const handleFormSubmit = useCallback(
+    event => {
+      router.push('/pl/something?name=' + formRef.current.name.value);
+    },
+    [router, formRef.current]
+  );
 
   return (
     <>
@@ -23,7 +23,11 @@ export const FormPage = ({ surname, name }) => {
       <form onSubmit={handleSubmit(handleFormSubmit)} ref={formRef}>
         <p>
           <label htmlFor="name">Name</label>
-          <input type="text" name="name" id="name" ref={register} />
+          <input
+            type="text"
+            id="name"
+            {...register('name', { required: true })}
+          />
         </p>
         <button type="submit">Submit</button>
       </form>
